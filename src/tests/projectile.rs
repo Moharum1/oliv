@@ -1,4 +1,4 @@
-use crate::engine::math::CoOrdinate;
+use crate::engine::math::vector::CoOrdinate;
 
 #[derive(Debug)]
 struct Projectile{
@@ -35,7 +35,7 @@ impl PlayGround {
 mod play{
     use crate::engine::colors::Color;
     use crate::engine::canvas::{Canvas};
-    use crate::engine::math::CoOrdinate;
+    use crate::engine::math::vector::CoOrdinate;
     use crate::tests::projectile::{Environment, PlayGround, Projectile};
 
     #[test]

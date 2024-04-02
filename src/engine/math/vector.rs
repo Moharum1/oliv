@@ -1,8 +1,9 @@
 use std::cmp::PartialEq;
 use std::ops;
 use std::ops::{Add, Sub};
+use crate::engine::math::vector::CoOrdinateType::{Point, Vector};
 
-use crate::engine::math::CoOrdinateType::{Point, Vector};
+
 
 #[derive(PartialEq,Debug,Copy, Clone)]
 enum CoOrdinateType{
@@ -170,7 +171,7 @@ impl ops::Div<i32> for CoOrdinate{
 
 #[cfg(test)]
 mod test{
-    use crate::engine::math::CoOrdinate;
+    use crate::engine::math::vector::CoOrdinate;
 
     #[test]
     fn check_point_or_vector(){
