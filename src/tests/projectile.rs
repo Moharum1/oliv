@@ -55,7 +55,7 @@ mod play{
             env: v,
         };
 
-        let mut canva = Canvas::new(950, 550);
+        let mut canva = Canvas::new(150, 550);
 
         loop{
             ground.tick();
@@ -70,6 +70,6 @@ mod play{
             }
         }
 
-        canva.to_ppm();
+        canva.to_ppm("Project");
     }
 }
