@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod test{
-    use crate::engine::colors::Color;
+    use crate::engine::view::colors::Color;
 
     // Note : All Basic operations works but with a floating point error
 

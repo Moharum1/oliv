@@ -4,6 +4,7 @@ use crate::engine::math::vector::CoOrdinate;
 
 impl CoOrdinate{
 
+    // TODO: Implement the transpose trait for the func like Translation
     pub fn scale(self, x:f32, y:f32, z:f32) -> CoOrdinate{
         let scale_mat = Matrix4X4 {
             rows: [
@@ -17,6 +18,7 @@ impl CoOrdinate{
         scale_mat * self
     }
 
+    // TODO: Implement the transpose trait for the func like Translation
     pub fn shrink(self, x:f32, y:f32, z:f32) -> CoOrdinate{
         let mut scale_mat = Matrix4X4 {
             rows: [
@@ -32,6 +34,7 @@ impl CoOrdinate{
         scale_mat * self
     }
 
+    // TODO: Implement the transpose trait for the func like Translation
     pub fn reflect(self, x:f32, y:f32, z:f32) -> CoOrdinate{
         let scale_mat = Matrix4X4 {
             rows: [

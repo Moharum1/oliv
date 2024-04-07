@@ -1,14 +1,14 @@
 use std::ops;
 
-#[derive(PartialEq,Debug,Clone)]
-pub(crate) struct Color{
+#[derive(PartialEq, Debug, Clone, Copy)]
+pub struct Color{
     r: f32,
     g: f32,
     b: f32
 }
 
 impl Color{
-    pub(crate) const fn new(r:f32, g:f32, b:f32) -> Color {
+    pub const fn new(r:f32, g:f32, b:f32) -> Color {
         Color{
             r,g,b
         }

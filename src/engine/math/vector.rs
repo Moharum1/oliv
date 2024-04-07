@@ -1,6 +1,7 @@
 use std::cmp::PartialEq;
 use std::ops;
-use std::ops::{Add, Sub};
+use std::ops::{Add, Mul, Sub};
+use crate::engine::math::matrix::Matrix4X4;
 use crate::engine::math::vector::CoOrdinateType::{Point, Vector};
 
 
@@ -41,9 +42,9 @@ impl Sub for CoOrdinateType {
 
 #[derive(PartialEq,Debug,Copy, Clone)]
 pub struct CoOrdinate{
-    pub(crate) x: f32,
-    pub(crate) y: f32,
-    pub(crate) z: f32,
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
     pub(crate) kind: CoOrdinateType
 }
 
@@ -142,7 +143,7 @@ impl Sub for CoOrdinate{
     }
 }
 
-impl ops::Mul<i32> for CoOrdinate{
+impl Mul<i32> for CoOrdinate{
     type Output = CoOrdinate;
 
     fn mul(self, rhs: i32) -> Self::Output {
@@ -154,6 +155,20 @@ impl ops::Mul<i32> for CoOrdinate{
         }
     }
 }
+
+// impl Mul<CoOrdinate> for CoOrdinate{
+//     type Output = CoOrdinate;
+//
+//     fn mul(self, rhs: CoOrdinate) -> Self::Output {
+//         CoOrdinate {
+//             x: self.x * rhs.x,
+//             y: self.y * rhs.y,
+//             z: self.z * rhs.z,
+//             kind: self.kind,
+//         }
+//     }
+// }
+
 
 impl ops::Div<i32> for CoOrdinate{
     type Output = CoOrdinate;

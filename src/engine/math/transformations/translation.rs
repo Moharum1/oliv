@@ -5,7 +5,7 @@ use crate::engine::math::vector::CoOrdinate;
 use crate::engine::math::vector::CoOrdinateType::Vector;
 
 impl CoOrdinate{
-    pub fn translate(self, x:f32, y:f32, z:f32) -> CoOrdinate{
+    pub fn translate(self, x:f32, y:f32, z:f32, transpose: Option<bool>) -> CoOrdinate{
         let translate_mat = Matrix4X4 {
             rows: [
                 [1.0, 0.0 , 0.0,  x],
@@ -15,10 +15,14 @@ impl CoOrdinate{
             ]
         };
 
-        translate_mat * self
+        if transpose.unwrap_or(false){
+            translate_mat.transpose() * self
+        } else {
+            translate_mat * self
+        }
     }
 
-    pub fn inverse_translate(self, x:f32, y:f32, z:f32)-> CoOrdinate{
+    pub fn inverse_translate(self, x:f32, y:f32, z:f32, transpose : Option<bool>) -> CoOrdinate{
         let mut translate_mat = Matrix4X4 {
             rows: [
                 [1.0, 0.0 , 0.0,  x],
@@ -30,7 +34,11 @@ impl CoOrdinate{
 
         translate_mat = translate_mat.inverse().unwrap();
 
-        translate_mat * self
+        if transpose.unwrap_or(false){
+            translate_mat.transpose() * self
+        } else {
+            translate_mat * self
+        }
     }
 }
 
@@ -69,7 +77,7 @@ impl Mul<CoOrdinate> for Translation {
         let type_value = (rhs.kind as i32) as f32;
 
         let x = {
-            self.0.rows[0][0] * rhs.x +
+                self.0.rows[0][0] * rhs.x +
                 self.0.rows[0][1] * rhs.y +
                 self.0.rows[0][2] * rhs.z +
                 self.0.rows[0][3] * type_value
@@ -88,7 +96,6 @@ impl Mul<CoOrdinate> for Translation {
                 self.0.rows[2][2] * rhs.z +
                 self.0.rows[2][3] * type_value
         };
-
 
         if rhs.kind == Vector{
             CoOrdinate::new_vector(x,y,z)
@@ -120,7 +127,7 @@ mod test{
     fn transform_with_inverse_matrix(){
         let point = CoOrdinate::new_point(-3.0, 4.0, 5.0);
 
-        assert_eq!(point.inverse_translate(5.0, -3.0, 2.0), CoOrdinate::new_point(-8.0, 7.0, 3.0))
+        assert_eq!(point.inverse_translate(5.0, -3.0, 2.0, None), CoOrdinate::new_point(-8.0, 7.0, 3.0))
     }
 }
 

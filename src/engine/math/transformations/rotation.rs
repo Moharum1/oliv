@@ -2,6 +2,8 @@ use crate::engine::math::matrix::Matrix4X4;
 use crate::engine::math::vector::CoOrdinate;
 
 impl CoOrdinate {
+
+    // TODO: Implement the transpose trait for the func like Translation
     pub fn rotate_x(self, degree: f32) -> CoOrdinate {
         let x_rotation_mat = Matrix4X4 {
             rows: [
@@ -15,6 +17,23 @@ impl CoOrdinate {
          x_rotation_mat * self
     }
 
+
+    // TODO: Implement the transpose trait for the func like Translation
+    pub fn inverse_rotate_x(self, degree: f32) -> CoOrdinate {
+        let x_rotation_mat = Matrix4X4 {
+            rows: [
+                [1.0, 0.0         , 0.0          , 0.0],
+                [0.0, degree.cos(), -degree.sin(), 0.0],
+                [0.0, degree.sin(), degree.cos() , 0.0],
+                [0.0, 0.0         , 0.0          , 1.0]
+            ]
+        };
+
+        x_rotation_mat.inverse().unwrap() * self
+    }
+
+
+    // TODO: Implement the transpose trait for the func like Translation
     pub fn rotate_y(self, degree: f32) -> CoOrdinate {
         let y_rotation_mat = Matrix4X4 {
             rows: [
@@ -28,6 +47,22 @@ impl CoOrdinate {
         y_rotation_mat * self
     }
 
+
+    // TODO: Implement the transpose trait for the func like Translation
+    pub fn inverse_rotate_y(self, degree: f32) -> CoOrdinate {
+        let y_rotation_mat = Matrix4X4 {
+            rows: [
+                [degree.cos(), 0.0, degree.sin(), 0.0],
+                [0.0, 1.0, 0.0, 0.0],
+                [-degree.sin(), 0.0, degree.cos(), 0.0],
+                [0.0, 0.0, 0.0, 1.0]
+            ]
+        };
+
+        y_rotation_mat.inverse().unwrap() * self
+    }
+
+    // TODO: Implement the transpose trait for the func like Translation
     pub fn rotate_z(self, degree: f32) -> CoOrdinate {
         let z_rotation_mat = Matrix4X4 {
             rows: [
@@ -39,6 +74,20 @@ impl CoOrdinate {
         };
 
         z_rotation_mat * self
+    }
+
+    // TODO: Implement the transpose trait for the func like Translation
+    pub fn inverse_rotate_z(self, degree: f32) -> CoOrdinate {
+        let z_rotation_mat = Matrix4X4 {
+            rows: [
+                [degree.cos(), -degree.sin(), 0.0, 0.0],
+                [degree.sin(), degree.cos(), 0.0, 0.0],
+                [0.0, 0.0, 1.0, 0.0],
+                [0.0, 0.0, 0.0, 1.0]
+            ]
+        };
+
+        z_rotation_mat.inverse().unwrap() * self
     }
 }
 

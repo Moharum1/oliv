@@ -17,13 +17,17 @@ use crate::engine::math::vector::CoOrdinateType::Vector;
 
 type Matrix4X1 = [f32; 4];
 
-const IDENTITY_MAT4X4: [[f32; 4]; 4] = [
-                                            [1f32 ,0.0 ,0.0 ,0.0 ],
-                                            [0f32 ,1.0 ,0.0 ,0.0 ],
-                                            [0f32 ,0.0 ,0.0 ,1.0 ],
-                                            [0f32 ,0.0 ,0.0 ,1.0 ]
-                                        ];
-#[derive(PartialEq, Debug, Clone)]
+pub const IDENTITY_MAT4X4: Matrix4X4 = Matrix4X4{
+    rows: [
+        [1f32 ,0.0 ,0.0 ,0.0 ],
+        [0f32 ,1.0 ,0.0 ,0.0 ],
+        [0f32 ,0.0 ,0.0 ,1.0 ],
+        [0f32 ,0.0 ,0.0 ,1.0 ]
+    ]
+};
+
+
+#[derive(PartialEq, Debug, Clone, Copy)]
 pub(crate) struct Matrix4X4{
     pub(crate) rows: [[f32; 4]; 4]
 }
@@ -231,7 +235,7 @@ impl Mul<Matrix4X1> for Matrix4X4{
     }
 }
 
-impl Mul<CoOrdinate> for Matrix4X4 {
+impl<'a> Mul<CoOrdinate> for &'a Matrix4X4 {
     type Output = CoOrdinate;
 
     fn mul(self, rhs: CoOrdinate) -> Self::Output {
@@ -267,3 +271,12 @@ impl Mul<CoOrdinate> for Matrix4X4 {
         }
     }
 }
+
+impl Mul<CoOrdinate> for Matrix4X4 {
+    type Output = CoOrdinate;
+
+    fn mul(self, rhs: CoOrdinate) -> Self::Output {
+        (&self).mul(rhs)
+    }
+}
+

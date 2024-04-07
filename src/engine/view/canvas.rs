@@ -1,17 +1,19 @@
 use std::fs::File;
 use std::io::{BufWriter, Write};
-use crate::engine::colors::Color;
+use crate::engine::math::vector::CoOrdinate;
+use crate::engine::view::colors::Color;
 
 #[derive(Clone)]
-pub(crate) struct
+pub struct
 Canvas{
-    w: usize,
-    h: usize,
+    pub(crate) w: usize,
+    pub(crate) h: usize,
     pub(crate) map: Vec<Vec<Color>>
 }
 
 impl Canvas{
-    pub(crate) fn new(w:usize, h:usize) -> Canvas {
+    pub fn new(w:usize, aspect_ratio : f32) -> Canvas {
+        let h = (w as f32 / aspect_ratio).round() as usize;
         Canvas{
             w,
             h,
@@ -19,13 +21,20 @@ impl Canvas{
         }
     }
 
-    pub(crate) fn write_pixel(&mut self, x:usize, y:usize, color: Color){
+    pub fn write_pixel(&mut self, x:usize, y:usize, color: Color){
         if x < self.w && y < self.h {
             self.map[y][x] = color
         }
     }
 
-    pub(crate) fn to_ppm(&self, name : &str){
+    pub fn get_viewport_co_ordinates(&self,x: f32, y: f32 ,distance : f32) -> CoOrdinate {
+        CoOrdinate::new_point(
+            x * (100/self.w) as f32,
+            y * (100/self.h) as f32,
+            distance)
+    }
+
+    pub fn to_ppm(&self, name : &str){
         let path = "./res/{}.ppm".replace("{}", name);
         let file = File::create(path).expect("Failed to create an output");
         let mut writer = BufWriter::new(file);
