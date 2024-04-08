@@ -44,8 +44,8 @@ impl Ray{
 
             MatTransform::InverseTranslation(x, y, z) => {
                 Ray{
-                    origin:    self.origin.inverse_translate(x, y, z, None),
-                    direction: self.direction.inverse_translate(x, y, z, None),
+                    origin:    self.origin.inverse_translate(x, y, z),
+                    direction: self.direction.inverse_translate(x, y, z),
                 }
             }
 

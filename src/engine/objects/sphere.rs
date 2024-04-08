@@ -1,3 +1,4 @@
+use std::ops::Mul;
 use std::sync::atomic::Ordering;
 use std::sync::atomic::AtomicUsize;
 use crate::engine::core::intersection::{Intersection, Intersections};
@@ -5,8 +6,10 @@ use crate::engine::core::ray::Ray;
 use crate::engine::math::vector::CoOrdinate;
 use crate::engine::math::matrix::{IDENTITY_MAT4X4, Matrix4X4};
 use crate::engine::math::transformations::MatTransform;
-use crate::engine::math::transformations::MatTransform::{Ideal, InverseScaling, InverseTranslation, Scaling, Translation};
+use crate::engine::math::transformations::MatTransform::{Combination, Ideal, InverseScaling, InverseTranslation, Scaling, Translation};
+use crate::engine::math::transformations::scaling::Scale;
 use crate::engine::objects::Objects;
+use crate::engine::math::transformations::translation::Translate;
 
 static UNIQUE_ID: AtomicUsize = AtomicUsize::new(0);
 
@@ -15,7 +18,6 @@ static UNIQUE_ID: AtomicUsize = AtomicUsize::new(0);
 pub struct Sphere{
     id         : usize,
     pos        : CoOrdinate,
-    pos_matrix : Matrix4X4,
     radius     : f32,
     transform  : MatTransform
 }
@@ -26,7 +28,6 @@ impl Sphere{
         Sphere{
             id,
             pos: CoOrdinate::new_point(0.0, 0.0, 0.0),
-            pos_matrix: IDENTITY_MAT4X4,
             radius: 1.0,
             transform: Ideal
         }
@@ -60,6 +61,8 @@ impl Sphere{
     }
 
     pub fn set_transform(&mut self, transform : MatTransform){
+
+        // Function will match the transform and apply it to the sphere transform trait
         match transform {
             Translation(x, y, z) => {
                 self.transform = Translation(x,y,z)
@@ -76,43 +79,60 @@ impl Sphere{
                 self.transform = InverseScaling(x,y,z)
             }
 
+            Combination(Mat) => {
+                self.transform = Combination(Mat)
+            }
+
             _ => {
             }
         }
     }
 
-    pub fn normal_at(&self, point : CoOrdinate) -> CoOrdinate{
+    pub fn normal_at(&self, world_point : CoOrdinate) -> CoOrdinate {
 
         let object_pos;
         let sphere_transpose_coord;
 
+        // TODO : SOLVE the issue in normal calculation
         match self.transform {
             Translation(x, y, z) => {
-                object_pos = point.inverse_translate(x, y, z, None);
-                sphere_transpose_coord = self.pos_matrix.inverse().expect("Can't be inverse").transpose();
+                object_pos = world_point.inverse_translate(x, y, z);
+                sphere_transpose_coord = Translate::new(x,y,z).0.inverse().unwrap().transpose();
             }
+
             Scaling(x, y, z) => {
-                object_pos = point.inverse_translate(x, y, z, None);
-                sphere_transpose_coord = self.pos_matrix.inverse().expect("Can't be inverse").transpose();
+                object_pos =  world_point.shrink(x, y, z);
+                sphere_transpose_coord = Scale::new(x,y,z).0.inverse().unwrap().transpose();
             }
+
+            Combination(Mat) => {
+                println!("{:?}", Mat);
+                object_pos = Mat.inverse().unwrap_or(IDENTITY_MAT4X4) * world_point;
+                sphere_transpose_coord = Mat.inverse().unwrap_or(IDENTITY_MAT4X4).transpose();
+            }
+
             _ => {
-                object_pos = point;
-                sphere_transpose_coord = self.pos_matrix.inverse().expect("Can't be inverse").transpose();
+                return world_point - self.pos;
             }
-        };
+        }
 
         let object_normal = object_pos - self.pos;
         let mut world_normal = sphere_transpose_coord * object_normal;
 
-        world_normal.normalize()
+        return world_normal.normalize();
     }
 }
 
 #[cfg(test)]
 mod test{
+    use std::f32::consts::PI;
     use crate::engine::core::intersection::{Intersection, Intersections};
     use crate::engine::core::ray::Ray;
     use crate::engine::math::transformations::MatTransform;
+    use crate::engine::math::transformations::MatTransform::Rotation;
+    use crate::engine::math::transformations::rotation::Rotate;
+    use crate::engine::math::transformations::scaling::Scale;
+    use crate::engine::math::transformations::translation::Translate;
     use crate::engine::math::vector::CoOrdinate;
     use crate::engine::objects::Objects;
     use crate::engine::objects::sphere::Sphere;
@@ -181,9 +201,19 @@ mod test{
     #[test]
     fn compute_normal_for_translated_spheres(){
         let mut s = Sphere::new();
+
         s.set_transform(MatTransform::Translation(0.0, 1.0, 0.0));
 
-        let point1 = CoOrdinate::new_point(0.0, 1.70711,  -0.70711);
-        assert_eq!(s.normal_at(point1), CoOrdinate::new_vector(0.0, 0.70711, -0.70711))
+        let point1 = CoOrdinate::new_point(0.0, 1.7071,  -0.70711);
+        assert_eq!(s.normal_at(point1), CoOrdinate::new_vector(0.0, 0.7071018, -0.70711))
+    }
+
+    #[test]
+    fn compute_normal_for_translated_spheres2(){
+        let mut s = Sphere::new();
+        s.set_transform(MatTransform::Combination(Scale::new(1.0, 0.5, 1.0).0 *  Rotate::new().rotate_z(PI / 5.0)));
+
+        let point1 = CoOrdinate::new_point(0.0, 0.7071,  -0.7071);
+        assert_eq!(s.normal_at(point1), CoOrdinate::new_vector(0.0, 0.97014, -0.24254))
     }
 }

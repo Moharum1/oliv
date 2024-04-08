@@ -13,7 +13,7 @@ use std::ops::Mul;
 
 use crate::engine::math::operations::RoundToTwoDecimalPlaces;
 use crate::engine::math::vector::CoOrdinate;
-use crate::engine::math::vector::CoOrdinateType::Vector;
+use crate::engine::math::vector::CoOrdinateType::{Point, Vector};
 
 type Matrix4X1 = [f32; 4];
 
@@ -263,11 +263,20 @@ impl<'a> Mul<CoOrdinate> for &'a Matrix4X4 {
                 self.rows[2][3] * type_value
         };
 
-
         if rhs.kind == Vector{
-            CoOrdinate::new_vector(x,y,z)
+            CoOrdinate{
+                x,
+                y,
+                z,
+                kind: Vector,
+            }
         }else {
-            CoOrdinate::new_point(x,y,z)
+            CoOrdinate{
+                x,
+                y,
+                z,
+                kind: Point,
+            }
         }
     }
 }

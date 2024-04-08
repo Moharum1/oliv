@@ -19,6 +19,21 @@ impl CoOrdinate{
     }
 }
 
+pub struct Sheer(pub Matrix4X4);
+
+impl Sheer{
+    pub fn new(xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> Matrix4X4 {
+        Matrix4X4{
+            rows: [
+                [1.0, xy , xz , 0.0],
+                [yx , 1.0, yz , 0.0],
+                [zx , zy , 1.0, 0.0],
+                [0.0, 0.0, 0.0, 1.0]
+            ],
+        }
+    }
+}
+
 mod test{
     use crate::engine::math::vector::CoOrdinate;
 

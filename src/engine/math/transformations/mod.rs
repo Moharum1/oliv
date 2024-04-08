@@ -1,9 +1,9 @@
 use crate::engine::math::matrix::Matrix4X4;
 
-mod translation;
-mod scaling;
-mod rotation;
-mod shearing;
+pub(crate) mod translation;
+pub(crate) mod scaling;
+pub(crate) mod rotation;
+pub(crate) mod shearing;
 
 #[derive(PartialEq, Copy, Clone, Debug)]
 // TODO: Improve the way of choosing proper operation
@@ -14,5 +14,6 @@ pub enum MatTransform{
     InverseScaling(f32,f32,f32),
     Rotation(f32, f32, f32),
     Sheering(f32, f32, f32, f32, f32, f32),
+    Combination(Matrix4X4),
     Ideal
 }

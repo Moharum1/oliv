@@ -1,5 +1,6 @@
 use std::ops::Mul;
 use crate::engine::math::matrix::Matrix4X4;
+use crate::engine::math::transformations::MatTransform::Translation;
 use crate::engine::math::vector::CoOrdinate;
 
 impl CoOrdinate{
@@ -35,7 +36,7 @@ impl CoOrdinate{
     }
 
     // TODO: Implement the transpose trait for the func like Translation
-    pub fn reflect(self, x:f32, y:f32, z:f32) -> CoOrdinate{
+    pub fn reflection(self, x:f32, y:f32, z:f32) -> CoOrdinate{
         let scale_mat = Matrix4X4 {
             rows: [
                 [x  , 0.0, 0.0,   0.0],
@@ -46,6 +47,33 @@ impl CoOrdinate{
         };
 
         scale_mat * self
+    }
+}
+
+pub(crate) struct Scale(pub Matrix4X4);
+
+impl Scale{
+    pub fn new(x:f32, y:f32, z:f32) -> Scale {
+        Scale{
+            0: Matrix4X4 {
+                rows: [
+                    [x  , 0.0, 0.0,   0.0],
+                    [0.0, y  , 0.0,   0.0],
+                    [0.0, 0.0, z  ,   0.0],
+                    [0.0, 0.0, 0.0,   1.0]
+                ]
+            }
+        }
+    }
+
+    pub fn inverse(mut self) -> Scale {
+        let inverse = self.0.inverse();
+
+        if let Some(data) = inverse{
+            self.0 = data;
+        }
+
+        self
     }
 }
 
@@ -80,7 +108,7 @@ mod test{
         // reflecting is scaling using negative values
 
         let point = CoOrdinate::new_point(-4.0, 6.0, 8.0);
-        assert_eq!(point.reflect(-1.0, 1.0, 1.0), CoOrdinate::new_point(4.0, 6.0, 8.0))
+        assert_eq!(point.reflection(-1.0, 1.0, 1.0), CoOrdinate::new_point(4.0, 6.0, 8.0))
     }
 
 }

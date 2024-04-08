@@ -1,4 +1,4 @@
-use crate::engine::math::matrix::Matrix4X4;
+use crate::engine::math::matrix::{IDENTITY_MAT4X4, Matrix4X4};
 use crate::engine::math::vector::CoOrdinate;
 
 impl CoOrdinate {
@@ -88,6 +88,86 @@ impl CoOrdinate {
         };
 
         z_rotation_mat.inverse().unwrap() * self
+    }
+}
+
+pub struct Rotate(pub Matrix4X4);
+
+impl Rotate{
+    pub fn new() -> Rotate {
+        Rotate{
+            0: IDENTITY_MAT4X4,
+        }
+    }
+
+    pub fn rotate_x(self, degree: f32) -> Matrix4X4 {
+        Matrix4X4 {
+            rows: [
+                [1.0, 0.0         , 0.0          , 0.0],
+                [0.0, degree.cos(), -degree.sin(), 0.0],
+                [0.0, degree.sin(), degree.cos() , 0.0],
+                [0.0, 0.0         , 0.0          , 1.0]
+            ]
+        }
+    }
+
+
+    pub fn inverse_rotate_x(self, degree: f32) -> Matrix4X4 {
+        Matrix4X4 {
+            rows: [
+                [1.0, 0.0         , 0.0          , 0.0],
+                [0.0, degree.cos(), -degree.sin(), 0.0],
+                [0.0, degree.sin(), degree.cos() , 0.0],
+                [0.0, 0.0         , 0.0          , 1.0]
+            ]
+        }.inverse().unwrap()
+    }
+
+
+    pub fn rotate_y(self, degree: f32) -> Matrix4X4 {
+        Matrix4X4 {
+            rows: [
+                [degree.cos(), 0.0, degree.sin(), 0.0],
+                [0.0, 1.0, 0.0, 0.0],
+                [-degree.sin(), 0.0, degree.cos(), 0.0],
+                [0.0, 0.0, 0.0, 1.0]
+            ]
+        }
+    }
+
+
+    pub fn inverse_rotate_y(self, degree: f32) -> Matrix4X4 {
+        Matrix4X4 {
+            rows: [
+                [degree.cos(), 0.0, degree.sin(), 0.0],
+                [0.0, 1.0, 0.0, 0.0],
+                [-degree.sin(), 0.0, degree.cos(), 0.0],
+                [0.0, 0.0, 0.0, 1.0]
+            ]
+        }.inverse().unwrap()
+    }
+
+
+    pub fn rotate_z(self, degree: f32) -> Matrix4X4 {
+        Matrix4X4 {
+            rows: [
+                [degree.cos(), -degree.sin(), 0.0, 0.0],
+                [degree.sin(), degree.cos(), 0.0, 0.0],
+                [0.0, 0.0, 1.0, 0.0],
+                [0.0, 0.0, 0.0, 1.0]
+            ]
+        }
+    }
+
+    pub fn inverse_rotate_z(self, degree: f32) -> Matrix4X4 {
+        Matrix4X4 {
+            rows: [
+                [degree.cos(), -degree.sin(), 0.0, 0.0],
+                [degree.sin(), degree.cos(), 0.0, 0.0],
+                [0.0, 0.0, 1.0, 0.0],
+                [0.0, 0.0, 0.0, 1.0]
+            ]
+        }.inverse().unwrap()
     }
 }
 

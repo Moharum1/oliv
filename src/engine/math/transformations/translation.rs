@@ -5,7 +5,7 @@ use crate::engine::math::vector::CoOrdinate;
 use crate::engine::math::vector::CoOrdinateType::Vector;
 
 impl CoOrdinate{
-    pub fn translate(self, x:f32, y:f32, z:f32, transpose: Option<bool>) -> CoOrdinate{
+    pub fn translate(mut self, x:f32, y:f32, z:f32) -> CoOrdinate{
         let translate_mat = Matrix4X4 {
             rows: [
                 [1.0, 0.0 , 0.0,  x],
@@ -15,14 +15,10 @@ impl CoOrdinate{
             ]
         };
 
-        if transpose.unwrap_or(false){
-            translate_mat.transpose() * self
-        } else {
-            translate_mat * self
-        }
+        translate_mat * self
     }
 
-    pub fn inverse_translate(self, x:f32, y:f32, z:f32, transpose : Option<bool>) -> CoOrdinate{
+    pub fn inverse_translate(mut self, x:f32, y:f32, z:f32) -> CoOrdinate{
         let mut translate_mat = Matrix4X4 {
             rows: [
                 [1.0, 0.0 , 0.0,  x],
@@ -34,19 +30,16 @@ impl CoOrdinate{
 
         translate_mat = translate_mat.inverse().unwrap();
 
-        if transpose.unwrap_or(false){
-            translate_mat.transpose() * self
-        } else {
-            translate_mat * self
-        }
+        translate_mat * self
+
     }
 }
 
-pub struct Translation(pub(crate) Matrix4X4);
+pub struct Translate(pub(crate) Matrix4X4);
 
-impl Translation{
-    pub fn new(x:f32, y:f32, z:f32) -> Translation {
-        Translation{
+impl Translate{
+    pub fn new(x:f32, y:f32, z:f32) -> Translate {
+        Translate{
             0: Matrix4X4 {
                 rows: [
                     [1.0, 0.0 , 0.0,  x],
@@ -58,7 +51,7 @@ impl Translation{
         }
     }
 
-    pub fn inverse(mut self) -> Translation {
+    pub fn inverse(mut self) -> Translate {
         let inverse = self.0.inverse();
 
         if let Some(data) = inverse{
@@ -69,7 +62,7 @@ impl Translation{
     }
 }
 
-impl Mul<CoOrdinate> for Translation {
+impl Mul<CoOrdinate> for Translate {
     type Output = CoOrdinate;
 
     fn mul(self, rhs: CoOrdinate) -> Self::Output {
@@ -127,7 +120,7 @@ mod test{
     fn transform_with_inverse_matrix(){
         let point = CoOrdinate::new_point(-3.0, 4.0, 5.0);
 
-        assert_eq!(point.inverse_translate(5.0, -3.0, 2.0, None), CoOrdinate::new_point(-8.0, 7.0, 3.0))
+        assert_eq!(point.inverse_translate(5.0, -3.0, 2.0), CoOrdinate::new_point(-8.0, 7.0, 3.0))
     }
 }
 

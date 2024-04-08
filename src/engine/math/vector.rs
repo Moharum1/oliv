@@ -1,7 +1,7 @@
 use std::cmp::PartialEq;
+use std::fmt::{Debug, Formatter};
 use std::ops;
 use std::ops::{Add, Mul, Sub};
-use crate::engine::math::matrix::Matrix4X4;
 use crate::engine::math::vector::CoOrdinateType::{Point, Vector};
 
 
@@ -40,12 +40,12 @@ impl Sub for CoOrdinateType {
 
 
 
-#[derive(PartialEq,Debug,Copy, Clone)]
+#[derive(Copy, Clone)]
 pub struct CoOrdinate{
     pub x: f32,
     pub y: f32,
     pub z: f32,
-    pub(crate) kind: CoOrdinateType
+    pub(crate) kind: CoOrdinateType,
 }
 
 impl CoOrdinate{
@@ -54,7 +54,7 @@ impl CoOrdinate{
     }
 
     pub fn new_point(x:f32, y:f32, z:f32) -> CoOrdinate {
-        CoOrdinate{x, y, z, kind: Point }
+        CoOrdinate{x, y, z, kind: Point}
     }
 
     pub fn negate(&mut self){
@@ -115,6 +115,12 @@ impl CoOrdinate{
             kind: Vector,
         }
     }
+
+    pub fn reflect(self, normal : CoOrdinate) -> CoOrdinate {
+        let scalar = 2.0 * normal.dot(&self);
+        self - normal * scalar
+    }
+
 }
 
 impl Add for CoOrdinate{
@@ -143,14 +149,14 @@ impl Sub for CoOrdinate{
     }
 }
 
-impl Mul<i32> for CoOrdinate{
+impl Mul<f32> for CoOrdinate{
     type Output = CoOrdinate;
 
-    fn mul(self, rhs: i32) -> Self::Output {
+    fn mul(self, rhs: f32) -> Self::Output {
         CoOrdinate {
-            x: self.x * rhs as f32,
-            y: self.y * rhs as f32,
-            z: self.z * rhs as f32,
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
             kind: self.kind,
         }
     }
@@ -180,5 +186,19 @@ impl ops::Div<i32> for CoOrdinate{
             z: self.z / rhs as f32,
             kind: self.kind,
         }
+    }
+}
+
+
+impl Debug for CoOrdinate{
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Vector {{ x: {}, y: {}, z: {}, point: {:?} }}", self.x, self.y, self.z, self.kind)
+    }
+}
+
+
+impl PartialEq for CoOrdinate {
+    fn eq(&self, other: &Self) -> bool {
+        self.x == other.x && self.y == other.y && self.z == other.z && self.kind == self.kind
     }
 }

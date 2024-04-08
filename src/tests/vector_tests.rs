@@ -42,7 +42,7 @@ mod test{
     #[test]
     fn check_mul_and_div(){
         let mut point = CoOrdinate::new_point(3.0, 2.0, 1.0);
-        let res1 = point * 2;
+        let res1 = point * 2.0;
 
         point = CoOrdinate::new_point(3.0, 2.0, 1.0);
         let res2 = point / 2;
@@ -61,5 +61,13 @@ mod test{
         let mut vec = CoOrdinate::new_vector(3.0, 2.0, 1.0);
         vec.negate();
         assert_eq!(vec, CoOrdinate::new_vector(-3.0, -2.0, -1.0))
+    }
+
+    #[test]
+    fn check_reflection(){
+        let vec1 = CoOrdinate::new_vector(0.0, -1.0, 0.0);
+        let normal =  CoOrdinate::new_vector(0.7071, 0.7071, 0.0);
+
+        assert_eq!(vec1.reflect(normal), CoOrdinate::new_vector(1.0, 0.0, 0.0) )
     }
 }
